@@ -84,6 +84,32 @@ public class Main {
       return gson.toJson(bff);
   }
   
+  @RequestMapping(value = "/professores", method = RequestMethod.GET)
+  @ResponseBody
+  String listProfessores() {
+      ArrayList<String> cadeirasP1 = new ArrayList<>();
+      ArrayList<String> cadeirasP2 = new ArrayList<>();
+      
+      cadeirasP1.add("AED");
+      cadeirasP1.add("LP2");
+      cadeirasP1.add("TFC");
+      Professor p1 = new Professor("Bruno Cipriano", 27, "ULHT", cadeirasP1);
+      
+      cadeirasP2.add("FP");
+      cadeirasP2.add("LP1");
+      cadeirasP2.add("Computação Móvel");
+      cadeirasP2.add("TFC");
+      Professor p2 = new Professor("Pedro Alves", 30, "ULHT", cadeirasP2);
+      
+      
+      ArrayList<Professor> profs = new ArrayList<>();
+      profs.add(p1);
+      profs.add(p2);
+      
+      Gson gson = new Gson();
+      return gson.toJson(profs);
+  }
+  
   @RequestMapping("/hello")
   String hello(Map<String, Object> model) {
       RelativisticModel.select();
