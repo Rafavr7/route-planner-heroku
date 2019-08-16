@@ -16,6 +16,7 @@
 
 package com.example;
 
+import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Map;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @SpringBootApplication
@@ -58,11 +61,31 @@ public class Main {
     return "index";
   }
   
+  
+  @RequestMapping(value = "/paragens", method = RequestMethod.GET)
+  @ResponseBody
+  String listParagens() {
+      ArrayList<String> paragens = new ArrayList<>();
+      paragens.add("Oriente");
+      paragens.add("Sete Rios");
+      paragens.add("Entrecampos");
+      paragens.add("Sintra");
+      
+      Gson gson = new Gson();
+      return gson.toJson(paragens);
+  }
+  
   @RequestMapping("/hello")
   String hello(Map<String, Object> model) {
       RelativisticModel.select();
-      Amount<Mass> m = Amount.valueOf("12 GeV").to(KILOGRAM);
-      model.put("science", "E=mc^2: 12 GeV = " + m.toString());
+      String energy = System.getenv().get("ENERGY");
+      
+      if(energy == null) {
+          energy = "12 GeV";
+      }
+      
+      Amount<Mass> m = Amount.valueOf(energy).to(KILOGRAM);
+      model.put("science", "E=mc^2: " + energy + " = " + m.toString());
       return "hello";
   }
 
