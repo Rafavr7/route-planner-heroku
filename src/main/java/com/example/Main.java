@@ -75,6 +75,15 @@ public class Main {
       return gson.toJson(paragens);
   }
   
+  @RequestMapping(value = "/bff", method = RequestMethod.GET)
+  @ResponseBody
+  String bff() {
+      String bff = "João Viado Machado";
+      
+      Gson gson = new Gson();
+      return gson.toJson(bff);
+  }
+  
   @RequestMapping("/hello")
   String hello(Map<String, Object> model) {
       RelativisticModel.select();
