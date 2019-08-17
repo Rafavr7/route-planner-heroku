@@ -56,67 +56,20 @@ public class Main {
   public static void main(String[] args) throws Exception {
     SpringApplication.run(Main.class, args);
   }
-
-  @RequestMapping("/")
-  String index() {
-    return "index";
-  }
   
-  
-  @RequestMapping(value = "/paragens", method = RequestMethod.GET)
-  @ResponseBody
-  String listParagens() {
-      ArrayList<String> paragens = new ArrayList<>();
-      paragens.add("Oriente");
-      paragens.add("Sete Rios");
-      paragens.add("Entrecampos");
-      paragens.add("Sintra");
-      
-      Gson gson = new Gson();
-      return gson.toJson(paragens);
-  }
-  
-  @RequestMapping(value = "/bff", method = RequestMethod.GET)
-  @ResponseBody
-  String bff() {
-      String bff = "João Viado Machado";
-      
-      Gson gson = new Gson();
-      return gson.toJson(bff);
-  }
-  
-  @RequestMapping(value = "/professores", method = RequestMethod.GET)
-  @ResponseBody
-  String listProfessores() {
-      ArrayList<String> cadeirasP1 = new ArrayList<>();
-      ArrayList<String> cadeirasP2 = new ArrayList<>();
-      
-      cadeirasP1.add("AED");
-      cadeirasP1.add("LP2");
-      cadeirasP1.add("TFC");
-      Professor p1 = new Professor("Bruno Cipriano", 27, "ULHT", cadeirasP1);
-      
-      cadeirasP2.add("FP");
-      cadeirasP2.add("LP1");
-      cadeirasP2.add("Computação Móvel");
-      cadeirasP2.add("TFC");
-      Professor p2 = new Professor("Pedro Alves", 30, "ULHT", cadeirasP2);
-      
-      
-      ArrayList<Professor> profs = new ArrayList<>();
-      profs.add(p1);
-      profs.add(p2);
-      
-      Gson gson = new Gson();
-      return gson.toJson(profs);
-  }
   
   @RequestMapping(value = "/distritos/list", method = RequestMethod.GET)
   @ResponseBody
   String listDistritos() {
       DataBaseConnector jdbc = DataBaseConnector.getInstance();
+      ArrayList<Distrito> response = null;
       
-      ArrayList<Distrito> response = jdbc.listDistritos();
+      try {
+          response = jdbc.listDistritos();
+      }catch(SQLException ex) {
+          System.err.println(ex);
+      }
+      
       Gson gson = new Gson();
       return gson.toJson(response);
   }
@@ -125,45 +78,16 @@ public class Main {
   @ResponseBody
   String getDistritoById(@PathVariable(value = "id") Integer distritoId) {
       DataBaseConnector jdbc = DataBaseConnector.getInstance();
+      Distrito response = null;
       
-      Distrito response = jdbc.getDistritoById(distritoId);
+      try {
+          response = jdbc.getDistritoById(distritoId);
+      }catch(SQLException ex) {
+          System.err.println(ex);
+      }
+      
       Gson gson = new Gson();
       return gson.toJson(response);
-  }
-  
-  @RequestMapping("/hello")
-  String hello(Map<String, Object> model) {
-      RelativisticModel.select();
-      String energy = System.getenv().get("ENERGY");
-      
-      if(energy == null) {
-          energy = "12 GeV";
-      }
-      
-      Amount<Mass> m = Amount.valueOf(energy).to(KILOGRAM);
-      model.put("science", "E=mc^2: " + energy + " = " + m.toString());
-      return "hello";
-  }
-
-  @RequestMapping("/db")
-  String db(Map<String, Object> model) {
-    try (Connection connection = dataSource.getConnection()) {
-      Statement stmt = connection.createStatement();
-      stmt.executeUpdate("CREATE TABLE IF NOT EXISTS ticks (tick timestamp)");
-      stmt.executeUpdate("INSERT INTO ticks VALUES (now())");
-      ResultSet rs = stmt.executeQuery("SELECT tick FROM ticks");
-
-      ArrayList<String> output = new ArrayList<String>();
-      while (rs.next()) {
-        output.add("Read from DB: " + rs.getTimestamp("tick"));
-      }
-
-      model.put("records", output);
-      return "db";
-    } catch (Exception e) {
-      model.put("message", e.getMessage());
-      return "error";
-    }
   }
 
   @Bean

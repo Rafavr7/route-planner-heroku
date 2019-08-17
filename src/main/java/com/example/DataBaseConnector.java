@@ -41,14 +41,17 @@ public class DataBaseConnector {
      * 
      * @return 
      */
-    public ArrayList<Distrito> listDistritos() {
+    public ArrayList<Distrito> listDistritos() throws SQLException {
+        Connection con = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        
         ArrayList<Distrito> distritos = new ArrayList<>();
         
         try {
-            Connection con = ConnectionUtil.getConnection();
-            Statement statement = con.createStatement();
-            ResultSet resultSet;
-            
+            con = ConnectionUtil.getConnection();
+            statement = con.createStatement();
+                        
             String query = "SELECT * FROM " + DISTRITOS_TABLE_NAME;
             resultSet = statement.executeQuery(query);
             
@@ -66,18 +69,32 @@ public class DataBaseConnector {
             ex.printStackTrace();
             return null;
         }
+        finally {
+            if(resultSet != null) {
+                resultSet.close();
+            }
+            if(statement != null) {
+                statement.close();
+            }
+            if(con != null) {
+                con.close();
+            }
+        }
         
         return distritos;
     }
     
     
-    public Distrito getDistritoById(Integer distritoId) {
+    public Distrito getDistritoById(Integer distritoId) throws SQLException {
+        Connection con = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        
         Distrito distrito = null;
         
         try {
-            Connection con = ConnectionUtil.getConnection();
-            Statement statement = con.createStatement();
-            ResultSet resultSet;
+            con = ConnectionUtil.getConnection();
+            statement = con.createStatement();
             
             String query = "SELECT * FROM " + DISTRITOS_TABLE_NAME + " WHERE id= '"
                     + distritoId + "'";
@@ -96,6 +113,17 @@ public class DataBaseConnector {
                     + " '" + DISTRITOS_TABLE_NAME + "'");
             ex.printStackTrace();
             return null;
+        }
+        finally {
+            if(resultSet != null) {
+                resultSet.close();
+            }
+            if(statement != null) {
+                statement.close();
+            }
+            if(con != null) {
+                con.close();
+            }
         }
         
         return distrito;
