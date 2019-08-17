@@ -19,30 +19,13 @@ public class DataBaseConnector {
     private static final String DISTRITOS_TABLE_NAME = "distritos";
     
     
-    private Connection connection;
-    private Statement statement;
-    private ResultSet resultSet;
+    //private Connection connection;
+    //private Statement statement;
+    //private ResultSet resultSet;
     
     
     private DataBaseConnector() {
-        System.out.println("Iniciar a conexão com a base de dados...");
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            
-            connection = DriverManager.getConnection(DB_URL + DB_NAME, DB_USERNAME, DB_PASSWORD);
-            statement = connection.createStatement();
-            System.out.println("Conexão com '" + DB_NAME + "' (Route Planner) "
-                    + "bem sucedida!");
-            
-        }
-        catch(ClassNotFoundException ex) {
-            System.err.println("Erro ao conectar com a Base de Dados!");
-            ex.printStackTrace();
-        }
-        catch(SQLException ex) {
-            System.err.println("Erro ao conectar com a Base de Dados!");
-            ex.printStackTrace();
-        }
+        
     }
     
     public static DataBaseConnector getInstance() {
@@ -62,6 +45,10 @@ public class DataBaseConnector {
         ArrayList<Distrito> distritos = new ArrayList<>();
         
         try {
+            Connection con = ConnectionUtil.getConnection();
+            Statement statement = con.createStatement();
+            ResultSet resultSet;
+            
             String query = "SELECT * FROM " + DISTRITOS_TABLE_NAME;
             resultSet = statement.executeQuery(query);
             
@@ -88,6 +75,10 @@ public class DataBaseConnector {
         Distrito distrito = null;
         
         try {
+            Connection con = ConnectionUtil.getConnection();
+            Statement statement = con.createStatement();
+            ResultSet resultSet;
+            
             String query = "SELECT * FROM " + DISTRITOS_TABLE_NAME + " WHERE id= '"
                     + distritoId + "'";
             resultSet = statement.executeQuery(query);
