@@ -39,6 +39,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Map;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -108,6 +109,26 @@ public class Main {
       
       Gson gson = new Gson();
       return gson.toJson(profs);
+  }
+  
+  @RequestMapping(value = "/distritos/list", method = RequestMethod.GET)
+  @ResponseBody
+  String listDistritos() {
+      DataBaseConnector jdbc = DataBaseConnector.getInstance();
+      
+      ArrayList<Distrito> response = jdbc.listDistritos();
+      Gson gson = new Gson();
+      return gson.toJson(response);
+  }
+  
+  @RequestMapping(value = "/distritos/{id}", method = RequestMethod.GET)
+  @ResponseBody
+  String getDistritoById(@PathVariable(value = "id") Integer distritoId) {
+      DataBaseConnector jdbc = DataBaseConnector.getInstance();
+      
+      Distrito response = jdbc.getDistritoById(distritoId);
+      Gson gson = new Gson();
+      return gson.toJson(response);
   }
   
   @RequestMapping("/hello")
