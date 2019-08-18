@@ -25,23 +25,16 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.jscience.physics.model.RelativisticModel;
-import org.jscience.physics.amount.Amount;
-
-import static javax.measure.unit.SI.KILOGRAM;
-import javax.measure.quantity.Mass;
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Map;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.sql.DataSource;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 @Controller
 @SpringBootApplication
@@ -84,6 +77,36 @@ public class Main {
           response = jdbc.getDistritoById(distritoId);
       }catch(SQLException ex) {
           System.err.println(ex);
+      }
+      
+      Gson gson = new Gson();
+      return gson.toJson(response);
+  }
+  
+  @RequestMapping(value = "/paragens/regex={regex}", method = RequestMethod.GET)
+  @ResponseBody
+  String getNomesParagensLike(@PathVariable(value = "regex") String regex) {
+      DataBaseConnector jdbc = DataBaseConnector.getInstance();
+      ArrayList<String> response = null;
+      
+      try {
+          response = jdbc.getNomesParagensLike(regex);
+      }catch(SQLException ex) {
+          System.err.println(ex);
+      }
+      
+      // Ordenar a lista por ordem de aparição da regex
+      if(response != null && response.size() > 1) {
+          Collections.sort(response, new Comparator<String>() {
+              @Override
+              public int compare(String nome1, String nome2) {
+                  if(nome1.indexOf(regex) - nome2.indexOf(regex) == 0) {
+                      return nome1.compareTo(nome2);
+                  }
+                  
+                  return nome1.indexOf(regex) - nome2.indexOf(regex);
+              }
+          });
       }
       
       Gson gson = new Gson();

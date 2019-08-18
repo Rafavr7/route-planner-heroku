@@ -17,11 +17,7 @@ public class DataBaseConnector {
     private static final String DB_PASSWORD = "0e3aef29";
     
     private static final String DISTRITOS_TABLE_NAME = "distritos";
-    
-    
-    //private Connection connection;
-    //private Statement statement;
-    //private ResultSet resultSet;
+    private static final String PARAGENS_TABLE_NAME = "paragens";
     
     
     private DataBaseConnector() {
@@ -127,6 +123,52 @@ public class DataBaseConnector {
         }
         
         return distrito;
+    }
+    
+    /**
+     * 
+     * @return
+     *      lista com nomes de paragens que contém a regex
+     */
+    public ArrayList<String> getNomesParagensLike(String regex) throws SQLException {
+        Connection con = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        
+        ArrayList<String> nomes = new ArrayList<>();
+        
+        try {
+            con = ConnectionUtil.getConnection();
+            statement = con.createStatement();
+            
+            String query = "SELECT * FROM " + PARAGENS_TABLE_NAME +
+                    " WHERE nome LIKE '%" + regex + "%'";
+            resultSet = statement.executeQuery(query);
+            
+            while(resultSet.next()) {
+                String nome = resultSet.getString("nome");
+                nomes.add(nome);
+            }
+            
+        }catch(SQLException ex) {
+            System.err.println("Não foi possível aceder aos dados da tabela '"
+                    + PARAGENS_TABLE_NAME + "'");
+            ex.printStackTrace();
+            return null;
+        }
+        finally {
+            if(resultSet != null) {
+                resultSet.close();
+            }
+            if(statement != null) {
+                statement.close();
+            }
+            if(con != null) {
+                con.close();
+            }
+        }
+        
+        return nomes;
     }
     
 }
