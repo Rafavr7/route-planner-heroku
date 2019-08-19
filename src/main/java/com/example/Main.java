@@ -16,6 +16,8 @@
 
 package com.example;
 
+import com.example.model.Distrito;
+import com.example.database.DataBaseConnector;
 import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
