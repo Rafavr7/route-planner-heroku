@@ -18,6 +18,7 @@ package com.example;
 
 import com.example.model.Distrito;
 import com.example.database.DataBaseConnector;
+import com.example.service.ParagemDAO;
 import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -35,8 +36,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 @Controller
 @SpringBootApplication
@@ -88,27 +87,12 @@ public class Main {
   @RequestMapping(value = "/paragens/regex={regex}", method = RequestMethod.GET)
   @ResponseBody
   String getNomesParagensLike(@PathVariable(value = "regex") String regex) {
-      DataBaseConnector jdbc = DataBaseConnector.getInstance();
       ArrayList<String> response = null;
       
       try {
-          response = jdbc.getNomesParagensLike(regex);
+          response = ParagemDAO.getNomesParagensLike(regex);
       }catch(SQLException ex) {
           System.err.println(ex);
-      }
-      
-      // Ordenar a lista por ordem de aparição da regex
-      if(response != null && response.size() > 1) {
-          Collections.sort(response, new Comparator<String>() {
-              @Override
-              public int compare(String nome1, String nome2) {
-                  if(nome1.indexOf(regex) - nome2.indexOf(regex) == 0) {
-                      return nome1.compareTo(nome2);
-                  }
-                  
-                  return nome1.indexOf(regex) - nome2.indexOf(regex);
-              }
-          });
       }
       
       Gson gson = new Gson();
