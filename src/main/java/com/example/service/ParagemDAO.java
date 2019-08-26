@@ -1,10 +1,14 @@
 package com.example.service;
 
+import com.example.model.Distrito;
+import com.example.model.Paragem;
 import com.example.utils.ConnectionUtil;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,6 +36,11 @@ public class ParagemDAO {
     
     private static final String COLUMN_PEDIDOS = "pedidos";
     
+    private static final String ALIAS_TABLE_NAME = "paragem_alias";
+    
+    private static final String ALIAS_TABLE_COLUMN_ALIAS = "alias";
+    
+    private static final String ALIAS_TABLE_NOME_PARAGEM = "nome_paragem";
     
     /***************
     ** Methods
@@ -40,6 +49,14 @@ public class ParagemDAO {
         // EMPTY
     }
     
+    /**
+     * 
+     * @param regex
+     * @return
+     *      lista com sugestões de nomes de paragem que respeitem a regex passada
+     * como parâmetro
+     * @throws SQLException 
+     */
     public static ArrayList<String> getNomesParagensLike(String regex) throws SQLException {
         Connection con = null;
         Statement statement = null;
@@ -92,5 +109,104 @@ public class ParagemDAO {
         }
         
         return nomes;
+    }
+    
+    public static Paragem getParagemByNome(String nomeProcurado) throws SQLException {
+        Connection con = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        
+        Paragem paragem = null;
+        
+        try {
+            con = ConnectionUtil.getConnection();
+            statement = con.createStatement();
+            
+            String upperNome = nomeProcurado.toUpperCase();
+            String query = "SELECT * FROM " + TABLE_NAME + " WHERE UPPER(" 
+                    + COLUMN_NOME + ") = '" + upperNome + "'";
+            
+            resultSet = statement.executeQuery(query);
+            if(resultSet.next()) {
+                Integer id = resultSet.getInt(COLUMN_ID);
+                String nome = resultSet.getString(COLUMN_NOME);
+                Double latitude = resultSet.getDouble(COLUMN_LATITUDE);
+                Double longitude = resultSet.getDouble(COLUMN_LONGITUDE);
+                Integer idDistrito = resultSet.getInt(COLUMN_ID_DISTRITO);
+                Integer pedidos = resultSet.getInt(COLUMN_PEDIDOS);
+                
+                Distrito distrito = DistritoDAO.getDistritoById(idDistrito);
+                paragem = new Paragem(id, nome, latitude, longitude, distrito, pedidos);
+            }
+        }
+        catch(SQLException ex) {
+            System.err.println("Não foi possível aceder aos dados da tabela '"
+                    + TABLE_NAME + "'");
+            System.err.println(ex);
+            return null;
+        }
+        finally {
+            if(resultSet != null) {
+                resultSet.close();
+            }
+            if(statement != null) {
+                statement.close();
+            }
+            if(con != null) {
+                con.close();
+            }
+        }
+        
+        return paragem;
+    }
+    
+    public static Paragem getParagemByAlias(String alias) throws SQLException {
+        Connection con = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        
+        Paragem paragem = null;
+        
+        try {
+            con = ConnectionUtil.getConnection();
+            statement = con.createStatement();
+            
+            String upperAlias = alias.toUpperCase();
+            StringBuilder queryAlias = new StringBuilder();
+            queryAlias.append("SELECT * FROM ")
+                    .append(ALIAS_TABLE_NAME)
+                    .append(" WHERE UPPER(")
+                    .append(ALIAS_TABLE_COLUMN_ALIAS)
+                    .append(") = '")
+                    .append(upperAlias)
+                    .append("'");
+            resultSet = statement.executeQuery(queryAlias.toString());
+            
+            if(resultSet.next()) {
+                String nomeParagem = resultSet.getString(ALIAS_TABLE_NOME_PARAGEM);
+                paragem = getParagemByNome(nomeParagem);
+            }
+            else {
+                return null;
+            }
+        }
+        catch(SQLException ex) {
+            System.err.println("Não foi possível aceder aos dados das tabelas");
+            System.err.println(ex);
+            return null;
+        }
+        finally {
+            if(resultSet != null) {
+                resultSet.close();
+            }
+            if(statement != null) {
+                statement.close();
+            }
+            if(con != null) {
+                con.close();
+            }
+        }
+        
+        return paragem;
     }
 }

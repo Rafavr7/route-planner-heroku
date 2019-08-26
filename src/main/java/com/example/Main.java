@@ -16,9 +16,6 @@
 
 package com.example;
 
-import com.example.model.Distrito;
-import com.example.database.DataBaseConnector;
-import com.example.service.ParagemDAO;
 import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -37,6 +34,11 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.example.model.Distrito;
+import com.example.model.Paragem;
+import com.example.database.DataBaseConnector;
+import com.example.service.ParagemDAO;
+
 @Controller
 @SpringBootApplication
 public class Main {
@@ -49,6 +51,12 @@ public class Main {
 
   public static void main(String[] args) throws Exception {
     SpringApplication.run(Main.class, args);
+    
+    Paragem p = ParagemDAO.getParagemByAlias("porto");
+      System.out.println(p + "\n");
+      
+      Paragem p2 = ParagemDAO.getParagemByNome("oriente");
+      System.out.println(p2);
   }
   
   
