@@ -2,6 +2,7 @@ package com.example.model;
 
 import com.example.model.enums.TipoTransporte;
 import com.example.utils.StringUtils;
+import java.util.Objects;
 
 /**
  * 
@@ -30,6 +31,34 @@ public class LinhaTransporte {
         this.nome = nome;
         this.tipoTransporte = tipoTransporte;
         this.custoCentimos = custoCentimos;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.id);
+        hash = 97 * hash + Objects.hashCode(this.nome);
+        hash = 97 * hash + Objects.hashCode(this.tipoTransporte);
+        hash = 97 * hash + Objects.hashCode(this.custoCentimos);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final LinhaTransporte other = (LinhaTransporte) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
     
     @Override

@@ -33,10 +33,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.example.model.Distrito;
-import com.example.model.Paragem;
 import com.example.database.DataBaseConnector;
+import com.example.model.LinhaTransporte;
+import com.example.service.LinhasTransporteDAO;
 import com.example.service.ParagemDAO;
 
 @Controller
@@ -50,13 +52,20 @@ public class Main {
   private DataSource dataSource;
 
   public static void main(String[] args) throws Exception {
-    SpringApplication.run(Main.class, args);
+    //SpringApplication.run(Main.class, args);
     
+    /**
     Paragem p = ParagemDAO.getParagemByAlias("porto");
-      System.out.println(p + "\n");
+    System.out.println(p + "\n");
       
-      Paragem p2 = ParagemDAO.getParagemByNome("oriente");
-      System.out.println(p2);
+    Paragem p2 = ParagemDAO.getParagemByNome("oriente");
+    System.out.println(p2);
+    **/
+    
+    HashSet<LinhaTransporte> linhas = new HashSet<>();
+    LinhasTransporteDAO.getAllLinhasByDistritoInHashSet(3, linhas);
+    LinhasTransporteDAO.getAllLinhasByDistritoInHashSet(1, linhas);
+    System.out.println(linhas);
   }
   
   

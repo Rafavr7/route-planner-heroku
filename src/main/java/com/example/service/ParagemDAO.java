@@ -172,15 +172,15 @@ public class ParagemDAO {
             statement = con.createStatement();
             
             String upperAlias = alias.toUpperCase();
-            StringBuilder queryAlias = new StringBuilder();
-            queryAlias.append("SELECT * FROM ")
+            StringBuilder query = new StringBuilder();
+            query.append("SELECT * FROM ")
                     .append(ALIAS_TABLE_NAME)
                     .append(" WHERE UPPER(")
                     .append(ALIAS_TABLE_COLUMN_ALIAS)
                     .append(") = '")
                     .append(upperAlias)
                     .append("'");
-            resultSet = statement.executeQuery(queryAlias.toString());
+            resultSet = statement.executeQuery(query.toString());
             
             if(resultSet.next()) {
                 String nomeParagem = resultSet.getString(ALIAS_TABLE_NOME_PARAGEM);
