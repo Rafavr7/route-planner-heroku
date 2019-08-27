@@ -52,7 +52,7 @@ public class Main {
   private DataSource dataSource;
 
   public static void main(String[] args) throws Exception {
-    //SpringApplication.run(Main.class, args);
+    SpringApplication.run(Main.class, args);
     
     /**
     Paragem p = ParagemDAO.getParagemByAlias("porto");
@@ -62,10 +62,12 @@ public class Main {
     System.out.println(p2);
     **/
     
+    /**
     HashSet<LinhaTransporte> linhas = new HashSet<>();
     LinhasTransporteDAO.getAllLinhasByDistritoInHashSet(3, linhas);
     LinhasTransporteDAO.getAllLinhasByDistritoInHashSet(1, linhas);
     System.out.println(linhas);
+    **/
   }
   
   

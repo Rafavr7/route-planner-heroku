@@ -126,5 +126,16 @@ public class LinhasTransporteDAO {
                     + TABLE_NAME);
             System.err.println(ex);
         }
+        finally {
+            if(resultSet != null) {
+                resultSet.close();
+            }
+            if(statement != null) {
+                statement.close();
+            }
+            if(con != null) {
+                con.close();
+            }
+        }
     }
 }

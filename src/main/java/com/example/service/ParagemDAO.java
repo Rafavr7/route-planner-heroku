@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 
 /**
  * 
@@ -42,6 +43,13 @@ public class ParagemDAO {
     
     private static final String ALIAS_TABLE_NOME_PARAGEM = "nome_paragem";
     
+    private static final String LINHAS_PARAGENS_TABLE_NAME = "paragens_linhas_transporte";
+    
+    private static final String LINHAS_PARAGENS_COLUMN_PARAGEM_ID = "id_paragem";
+    
+    private static final String LINHAS_PARAGENS_COLUMN_LINHA_ID = "id_linha_transporte";
+            
+            
     /***************
     ** Methods
     ***************/
@@ -109,6 +117,59 @@ public class ParagemDAO {
         }
         
         return nomes;
+    }
+    
+    public static Paragem getParagemById(int idProcurado) throws SQLException {
+        Connection con = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        
+        Paragem paragem = null;
+        
+        try {
+            con = ConnectionUtil.getConnection();
+            statement = con.createStatement();
+            
+            StringBuilder query = new StringBuilder();
+            query.append("SELECT * FROM ")
+                    .append(TABLE_NAME)
+                    .append(" WHERE ")
+                    .append(COLUMN_ID)
+                    .append(" = ")
+                    .append(idProcurado);
+            resultSet = statement.executeQuery(query.toString());
+            
+            if(resultSet.next()) {
+                Integer id = resultSet.getInt(COLUMN_ID);
+                String nome = resultSet.getString(COLUMN_NOME);
+                Double latitude = resultSet.getDouble(COLUMN_LATITUDE);
+                Double longitude = resultSet.getDouble(COLUMN_LONGITUDE);
+                Integer idDistrito = resultSet.getInt(COLUMN_ID_DISTRITO);
+                Integer pedidos = resultSet.getInt(COLUMN_PEDIDOS);
+                
+                Distrito distrito = DistritoDAO.getDistritoById(idDistrito);
+                paragem = new Paragem(id, nome, latitude, longitude, distrito, pedidos);
+            }
+        }
+        catch(SQLException ex) {
+            System.err.println("Não foi possível aceder aos dados da tabela '"
+                    + TABLE_NAME + "'");
+            System.err.println(ex);
+            return null;
+        }
+        finally {
+            if(resultSet != null) {
+                resultSet.close();
+            }
+            if(statement != null) {
+                statement.close();
+            }
+            if(con != null) {
+                con.close();
+            }
+        }
+        
+        return paragem;
     }
     
     public static Paragem getParagemByNome(String nomeProcurado) throws SQLException {
@@ -208,5 +269,49 @@ public class ParagemDAO {
         }
         
         return paragem;
+    }
+    
+    public static void getParagensByLinhaTransporteInHashSet(int idLinhaTransporte, HashSet<Paragem> paragensSet) throws SQLException {
+        Connection con = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        
+        try {
+            con = ConnectionUtil.getConnection();
+            statement = con.createStatement();
+            
+            StringBuilder query = new StringBuilder();
+            query.append("SELECT * FROM ")
+                    .append(LINHAS_PARAGENS_TABLE_NAME)
+                    .append(" WHERE ")
+                    .append(LINHAS_PARAGENS_COLUMN_LINHA_ID)
+                    .append(" = ")
+                    .append(idLinhaTransporte);
+            resultSet = statement.executeQuery(query.toString());
+            
+            while(resultSet.next()) {
+                int idParagem = resultSet.getInt(LINHAS_PARAGENS_COLUMN_PARAGEM_ID);
+                Paragem temp = getParagemById(idParagem);
+                
+                paragensSet.add(temp);
+            }
+            
+        }
+        catch(SQLException ex) {
+            System.err.println("Não foi possível aceder ao dados da tabela "
+                    + TABLE_NAME);
+            System.err.println(ex);
+        }
+        finally {
+            if(resultSet != null) {
+                resultSet.close();
+            }
+            if(statement != null) {
+                statement.close();
+            }
+            if(con != null) {
+                con.close();
+            }
+        }
     }
 }

@@ -61,5 +61,17 @@ public class Rota {
             LinhasTransporteDAO.getAllLinhasByDistritoInHashSet(idDistrito, linhasTransporteSet);
         }
         
+        
+        /**
+         * 3 - Sabendo as linhas de transporte, vamos agora atrás das paragens
+         * que são atendidas por essas mesmas linhas 
+         */
+        HashSet<Paragem> paragensSet = new HashSet<>();
+        for(LinhaTransporte linha : linhasTransporteSet) {
+            int idLinha = linha.getId();
+            ParagemDAO.getParagensByLinhaTransporteInHashSet(idLinha, paragensSet);
+        }
+        
+        
     }
 }

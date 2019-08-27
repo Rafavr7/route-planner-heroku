@@ -1,6 +1,7 @@
 package com.example.model;
 
 import com.example.utils.StringUtils;
+import java.util.Objects;
 
 /**
  * 
@@ -35,6 +36,36 @@ public class Paragem {
         this.longitude = longitude;
         this.distrito = distrito;
         this.pedidos = pedidos;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 19 * hash + Objects.hashCode(this.id);
+        hash = 19 * hash + Objects.hashCode(this.nome);
+        hash = 19 * hash + Objects.hashCode(this.latitude);
+        hash = 19 * hash + Objects.hashCode(this.longitude);
+        hash = 19 * hash + Objects.hashCode(this.distrito);
+        hash = 19 * hash + Objects.hashCode(this.pedidos);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Paragem other = (Paragem) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
     
     @Override
