@@ -72,6 +72,6 @@ public class Rota {
             ParagemDAO.getParagensByLinhaTransporteInHashSet(idLinha, paragensSet);
         }
         
-        
+        return null;
     }
 }
