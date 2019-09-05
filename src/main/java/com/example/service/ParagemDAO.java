@@ -77,7 +77,7 @@ public class ParagemDAO {
             statement = con.createStatement();
             
             String query = "SELECT * FROM " + TABLE_NAME +
-                    " WHERE nome LIKE '%" + regex + "%'";
+                    " WHERE " + COLUMN_NOME + " LIKE '%" + regex + "%'";
             resultSet = statement.executeQuery(query);
             
             while(resultSet.next()) {

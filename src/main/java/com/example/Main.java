@@ -33,17 +33,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import com.example.model.Distrito;
 import com.example.database.DataBaseConnector;
-import com.example.model.LinhaTransporte;
-import com.example.service.LinhasTransporteDAO;
+import com.example.model.Paragem;
+import com.example.model.Rota;
 import com.example.service.ParagemDAO;
+import java.util.Arrays;
 
 @Controller
 @SpringBootApplication
 public class Main {
+  private static String STRING_SEPARATOR = ",";
 
   @Value("${spring.datasource.url}")
   private String dbUrl;
@@ -112,6 +113,47 @@ public class Main {
           response = ParagemDAO.getNomesParagensLike(regex);
       }catch(SQLException ex) {
           System.err.println(ex);
+      }
+      
+      Gson gson = new Gson();
+      return gson.toJson(response);
+  }
+  
+  @RequestMapping(value = "/rotas/p={paragens}&pref={preferenciasPOIs}", method = RequestMethod.GET)
+  @ResponseBody
+  String getRota(@PathVariable(value = "paragens") String paragens,
+                 @PathVariable(value = "preferenciasPOIs") String preferenciasPOIs) {
+      
+      System.out.println("Pedido 'getRota' com argumentos:");
+      System.out.println("[paragens] = " + paragens);
+      String[] prefs = preferenciasPOIs.split(STRING_SEPARATOR);
+      int[] prefsArray = new int[prefs.length];
+      for(int x = 0; x < prefs.length; x++) {
+          prefsArray[x] = Integer.parseInt(prefs[x]);
+      }
+      System.out.println("[preferenciasPOIs] = " + Arrays.toString(prefsArray));
+      
+      String[] nomesParagens = paragens.split(STRING_SEPARATOR);
+      Rota response = null;
+      try {
+          response = Rota.getRota(nomesParagens[0], nomesParagens[1], prefsArray);
+      }
+      catch(Exception ex) {
+          System.err.println("Erro ao calcular rota!");
+          System.err.println(ex);
+      }
+      
+      if(response != null && nomesParagens.length == 3) {
+          Rota temp = null;
+          try {
+              temp = Rota.getRota(nomesParagens[1], nomesParagens[2], prefsArray);
+          }
+          catch(Exception ex) {
+              System.err.println("Erro ao calcular rota!");
+              System.err.println(ex);
+          }
+          
+          response = new Rota(response, temp);
       }
       
       Gson gson = new Gson();

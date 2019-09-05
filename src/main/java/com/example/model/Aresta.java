@@ -1,6 +1,7 @@
 package com.example.model;
 
 import com.example.utils.StringUtils;
+import java.util.Objects;
 
 /**
  * 
@@ -11,9 +12,9 @@ public class Aresta {
     /***************
     ** Class Attributes
     ***************/
-    private Integer id;
     private Paragem paragem1;
     private Paragem paragem2;
+    private LinhaTransporte linhaTransporte;
     private Integer custoMetros;
     private Integer custoMinutos;
     
@@ -25,15 +26,47 @@ public class Aresta {
         // EMPTY
     }
     
-    public Aresta(Integer id, Paragem paragem1, Paragem paragem2,
-            Integer custoMetros, Integer custoMinutos) {
+    public Aresta(Paragem paragem1, Paragem paragem2,
+            LinhaTransporte linhaTransporte, Integer custoMetros, Integer custoMinutos) {
         
-        this.id = id;
         this.paragem1 = paragem1;
         this.paragem2 = paragem2;
+        this.linhaTransporte = linhaTransporte;
         this.custoMetros = custoMetros;
         this.custoMinutos = custoMinutos;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        int idParagem1 = paragem1.getId();
+        int idParagem2 = paragem2.getId();
+        
+        hash = 79 * hash + Objects.hashCode(idParagem1);
+        hash = 79 * hash + Objects.hashCode(idParagem2);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Aresta other = (Aresta) obj;
+        if (!Objects.equals(this.paragem1, other.paragem1)) {
+            return false;
+        }
+        if (!Objects.equals(this.paragem2, other.paragem2)) {
+            return false;
+        }
+        return true;
+    }    
     
     @Override
     public String toString() {
@@ -44,14 +77,6 @@ public class Aresta {
     /***************
     ** Getters and Setters
     ***************/
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public Paragem getParagem1() {
         return paragem1;
     }
@@ -66,6 +91,14 @@ public class Aresta {
 
     public void setParagem2(Paragem paragem2) {
         this.paragem2 = paragem2;
+    }
+    
+    public LinhaTransporte getLinhaTransporte() {
+        return linhaTransporte;
+    }
+    
+    public void setLinhaTransporte(LinhaTransporte linhaTransporte) {
+        this.linhaTransporte = linhaTransporte;
     }
 
     public Integer getCustoMetros() {

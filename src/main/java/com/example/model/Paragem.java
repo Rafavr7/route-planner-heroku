@@ -1,6 +1,8 @@
 package com.example.model;
 
 import com.example.utils.StringUtils;
+
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -18,6 +20,7 @@ public class Paragem {
     private Double longitude;
     private Distrito distrito;
     private Integer pedidos;
+    private List<POI> poisList;
     
     
     /***************
@@ -123,6 +126,14 @@ public class Paragem {
 
     public void setPedidos(Integer pedidos) {
         this.pedidos = pedidos;
+    }
+    
+    public List<POI> getPoisList() {
+        return poisList;
+    }
+    
+    public void setPoisList(List<POI> poisList) {
+        this.poisList = poisList;
     }
     
 }
