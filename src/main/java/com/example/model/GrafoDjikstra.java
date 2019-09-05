@@ -1,5 +1,6 @@
 package com.example.model;
 
+import com.example.model.enums.TipoTransporte;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -116,12 +117,25 @@ public class GrafoDjikstra {
         int distanciaMetros = 0;
         int tempoMinutos = 0;
         Node nAtual = nodeDestino;
+        
+        LinhaTransporte linhaAtual = nAtual.getLinhaTransporte();
+        CustoTransporte custoTransporte = new CustoTransporte(linhaAtual.getCustoCentimos() / 100.0, linhaAtual.getTipoTransporte().toString());
+        ArrayList<CustoTransporte> custosList = new ArrayList<>();
+        custosList.add(custoTransporte);
         while(true) {
             Paragem pTemp = nAtual.getParagem();
             LinhaTransporte lTemp = nAtual.getLinhaTransporte();
             paragens.add(pTemp);
             linhas.add(lTemp);
             
+            if((linhaAtual.getTipoTransporte() == TipoTransporte.Metro && lTemp.getTipoTransporte() == TipoTransporte.Metro)
+                || (linhaAtual.getId() == lTemp.getId())) {
+                // Não faz nada
+            }
+            else {
+                custoTransporte = new CustoTransporte(linhaAtual.getCustoCentimos() / 100.0, linhaAtual.getTipoTransporte().toString());
+                custosList.add(custoTransporte);
+            }
             distanciaMetros += nAtual.getMenorDistancia();
             tempoMinutos += nAtual.getMenorCusto();
             
@@ -130,11 +144,13 @@ public class GrafoDjikstra {
             }
             
             nAtual = nAtual.getPrevious();
+            linhaAtual = lTemp;
         }
         
+        Collections.reverse(custosList);
         Collections.reverse(paragens);
         Collections.reverse(linhas);
-        Rota rota = new Rota(paragens, linhas, tempoMinutos, distanciaMetros / 1000.0);
+        Rota rota = new Rota(paragens, linhas, custosList, tempoMinutos, distanciaMetros / 1000.0);
         return rota;
     }
 }

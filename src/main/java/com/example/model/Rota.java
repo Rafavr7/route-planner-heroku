@@ -32,21 +32,19 @@ public class Rota {
     private String id = "";
     private List<Paragem> paragensList;
     private List<LinhaTransporte> linhasTransporteList;
+    private List<CustoTransporte> custos;
     private Integer duracao;
     private Double distancia;
-    // TODO
-    /**
-     * ArrayList<CustoTransporte> custos
-     */
     
     
     /***************
     ** Methods
     ***************/
     public Rota(List<Paragem> paragensList, List<LinhaTransporte> linhasTransporteList,
-            Integer duracao, Double distancia) {
+            List<CustoTransporte> custos, Integer duracao, Double distancia) {
         this.paragensList = paragensList;
         this.linhasTransporteList = linhasTransporteList;
+        this.custos = custos;
         this.duracao = duracao;
         this.distancia = distancia;
     }
@@ -58,14 +56,19 @@ public class Rota {
         
         List<Paragem> paragensRota1 = rota1.getParagensList();
         List<LinhaTransporte> linhasRota1 = rota1.getLinhasTransporteList();
+        List<CustoTransporte> custosRota1 = rota1.getCustos();
         List<Paragem> paragensRota2 = rota2.getParagensList();
         List<LinhaTransporte> linhasRota2 = rota2.getLinhasTransporteList();
+        List<CustoTransporte> custosRota2 = rota2.getCustos();
         
         paragensRota1.addAll(paragensRota2);
         linhasRota1.addAll(linhasRota2);
+        custosRota1.addAll(custosRota2);
         
         paragensList = paragensRota1;
         linhasTransporteList = linhasRota1;
+        custos = custosRota1;
+        
         distancia = rota1.getDistancia() + rota2.getDistancia();
         duracao = rota1.getDuracao() + rota2.getDuracao();
     }
@@ -224,5 +227,12 @@ public class Rota {
     public void setDistancia(Double distancia) {
         this.distancia = distancia;
     }
-    
+
+    public List<CustoTransporte> getCustos() {
+        return custos;
+    }
+
+    public void setCustos(List<CustoTransporte> custos) {
+        this.custos = custos;
+    }    
 }
