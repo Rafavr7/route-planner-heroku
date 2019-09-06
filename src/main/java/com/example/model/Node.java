@@ -41,6 +41,23 @@ public class Node implements Comparable<Node> {
     }
     
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        
+        Node outro = (Node) obj;
+        int pOutro = outro.getParagem().getId().intValue();
+        return paragem.getId().intValue() == pOutro;
+    }
+    
+    @Override
     public int compareTo(Node outro) {
         return outro.getMenorCusto() - menorCusto;
     }

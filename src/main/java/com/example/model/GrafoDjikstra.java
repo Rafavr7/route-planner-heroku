@@ -61,16 +61,20 @@ public class GrafoDjikstra {
     }
     
     public void initUnvisitedNodes(Paragem origem) {
+        System.out.println("ID Paragem Origem: " + origem.getId());
         for(Paragem paragem : paragensList) {
-            if(paragem.equals(origem)) {
+            System.out.println("ID Paragem to Node: " + paragem.getId());
+            if(paragem.getId().intValue() == origem.getId().intValue()) {
                 Node temp = new Node(paragem, 0);
                 unvisitedNodes.add(temp);
                 mapParagemNode.put(paragem, temp);
+                System.out.println("Unvisited Origem Node added: " + temp);
             }
             else {
                 Node temp = new Node(paragem);
                 unvisitedNodes.add(temp);
                 mapParagemNode.put(paragem, temp);
+                //System.out.println("Unvisited Node added: " + temp);
             }
         }
     }
@@ -78,13 +82,16 @@ public class GrafoDjikstra {
     public Rota encontrarRota(Paragem origem, Paragem destino) {
         initUnvisitedNodes(origem);
         Collections.sort(unvisitedNodes);
+        System.out.println("Unvisited Nodes: " + unvisitedNodes.size());
         
         ArrayList<Node> visitedNodes = new ArrayList<>();
+        int debugCount = 0;
         while(!unvisitedNodes.isEmpty()) {
             Node nodeAtual = unvisitedNodes.remove(unvisitedNodes.size() - 1);
             Paragem paragemAtual = nodeAtual.getParagem();
             int costSoFar = nodeAtual.getMenorCusto();
-            
+            System.out.println("Node atual: " + nodeAtual);
+            System.out.println("Iteração: " + debugCount++);
             if(costSoFar == Integer.MAX_VALUE) {
                 break;
             }
@@ -105,6 +112,7 @@ public class GrafoDjikstra {
         if(!visitedNodes.contains(nodeDestino)) {
             // Caso o node referente à paragem de destino não tenha sido visitado
             // então não existe caminho possível entre os dois pontos
+            System.out.println("Não encontrou ligação entre a Origem e o Destino");
             return null;
         }
         
@@ -128,6 +136,10 @@ public class GrafoDjikstra {
             paragens.add(pTemp);
             linhas.add(lTemp);
             
+            if(pTemp.getId().intValue() == origem.getId().intValue()) {
+                break;
+            }
+            
             if((linhaAtual.getTipoTransporte() == TipoTransporte.Metro && lTemp.getTipoTransporte() == TipoTransporte.Metro)
                 || (linhaAtual.getId() == lTemp.getId())) {
                 // Não faz nada
@@ -138,10 +150,6 @@ public class GrafoDjikstra {
             }
             distanciaMetros += nAtual.getMenorDistancia();
             tempoMinutos += nAtual.getMenorCusto();
-            
-            if(pTemp.equals(origem)) {
-                break;
-            }
             
             nAtual = nAtual.getPrevious();
             linhaAtual = lTemp;

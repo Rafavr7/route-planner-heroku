@@ -38,8 +38,10 @@ import com.example.model.Distrito;
 import com.example.database.DataBaseConnector;
 import com.example.model.Paragem;
 import com.example.model.Rota;
+import com.example.service.DistritoDAO;
 import com.example.service.ParagemDAO;
 import java.util.Arrays;
+import javax.websocket.server.PathParam;
 
 @Controller
 @SpringBootApplication
@@ -90,15 +92,8 @@ public class Main {
   
   @RequestMapping(value = "/distritos/{id}", method = RequestMethod.GET)
   @ResponseBody
-  String getDistritoById(@PathVariable(value = "id") Integer distritoId) {
-      DataBaseConnector jdbc = DataBaseConnector.getInstance();
-      Distrito response = null;
-      
-      try {
-          response = jdbc.getDistritoById(distritoId);
-      }catch(SQLException ex) {
-          System.err.println(ex);
-      }
+  String getDistritoById(@PathVariable(value = "id") Integer distritoId) throws Exception{
+      Distrito response = DistritoDAO.getDistritoById(distritoId);
       
       Gson gson = new Gson();
       return gson.toJson(response);
@@ -140,7 +135,7 @@ public class Main {
       }
       catch(Exception ex) {
           System.err.println("Erro ao calcular rota!");
-          System.err.println(ex);
+          ex.printStackTrace();
       }
       
       if(response != null && nomesParagens.length == 3) {
@@ -150,12 +145,20 @@ public class Main {
           }
           catch(Exception ex) {
               System.err.println("Erro ao calcular rota!");
-              System.err.println(ex);
+              ex.printStackTrace();
           }
           
           response = new Rota(response, temp);
       }
       
+      Gson gson = new Gson();
+      return gson.toJson(response);
+  }
+  
+  @RequestMapping(value = "/paragem/{id}", method = RequestMethod.GET)
+  @ResponseBody
+  public String getParagemById(@PathVariable(value = "id") int paragemId) throws Exception {
+      Paragem response = ParagemDAO.getParagemById(paragemId);
       Gson gson = new Gson();
       return gson.toJson(response);
   }

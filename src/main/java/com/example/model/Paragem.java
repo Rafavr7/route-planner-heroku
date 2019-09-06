@@ -46,10 +46,6 @@ public class Paragem {
         int hash = 5;
         hash = 19 * hash + Objects.hashCode(this.id);
         hash = 19 * hash + Objects.hashCode(this.nome);
-        hash = 19 * hash + Objects.hashCode(this.latitude);
-        hash = 19 * hash + Objects.hashCode(this.longitude);
-        hash = 19 * hash + Objects.hashCode(this.distrito);
-        hash = 19 * hash + Objects.hashCode(this.pedidos);
         return hash;
     }
 
@@ -65,10 +61,7 @@ public class Paragem {
             return false;
         }
         final Paragem other = (Paragem) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(id, other.getId());
     }
     
     @Override

@@ -196,7 +196,9 @@ public class ParagemDAO {
                 Integer idDistrito = resultSet.getInt(COLUMN_ID_DISTRITO);
                 Integer pedidos = resultSet.getInt(COLUMN_PEDIDOS);
                 
+                System.out.println("ID distrito: " + idDistrito);
                 Distrito distrito = DistritoDAO.getDistritoById(idDistrito);
+                System.out.println("Distrito: " + distrito);
                 paragem = new Paragem(id, nome, latitude, longitude, distrito, pedidos);
             }
         }

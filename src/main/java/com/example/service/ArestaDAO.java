@@ -9,8 +9,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import java.util.HashSet;
 
 /**
  * 
@@ -42,7 +43,7 @@ public class ArestaDAO {
     }
     
     public static void getDataAndUpdateSets(LinhaTransporte linhaTransporte,
-            HashSet<Paragem> paragensSet, HashSet<Aresta> arestasSet) throws SQLException {
+            HashMap<Integer, Paragem> paragensMap, HashMap<Integer, Aresta> arestasMap) throws SQLException {
         
         Connection con = null;
         Statement statement = null;
@@ -67,13 +68,22 @@ public class ArestaDAO {
                 Integer custoMetros = resultSet.getInt(COLUMN_CUSTO_METROS);
                 Integer custoMinutos = resultSet.getInt(COLUMN_CUSTO_MINUTOS);
                 
-                Paragem p1 = ParagemDAO.getParagemById(idParagem1);
-                Paragem p2 = ParagemDAO.getParagemById(idParagem2);
-                Aresta a = new Aresta(p1, p2, linhaTransporte, custoMetros, custoMinutos);
+                Paragem p1 = paragensMap.get(idParagem1);
+                Paragem p2 = paragensMap.get(idParagem2);
                 
-                paragensSet.add(p1);
-                paragensSet.add(p2);
-                arestasSet.add(a);
+                if(p1 == null) {
+                    p1 = ParagemDAO.getParagemById(idParagem1);
+                    paragensMap.put(idParagem1, p1);
+                }
+                if(p2 == null) {
+                    p2 = ParagemDAO.getParagemById(idParagem2);
+                    paragensMap.put(idParagem2, p2);
+                }
+                
+                Aresta a = new Aresta(p1, p2, linhaTransporte, custoMetros, custoMinutos);
+                if(!arestasMap.containsKey(a.hashCode())) {
+                    arestasMap.put(a.hashCode(), a);
+                }
             }
         }
         catch(SQLException ex) {

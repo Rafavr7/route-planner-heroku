@@ -7,6 +7,7 @@ import com.example.service.POIDao;
 import com.example.service.ParagemDAO;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.HashSet;
 
@@ -87,8 +88,10 @@ public class Rota {
         }
         
         if(origem == null) {
+            System.out.println("Paragem de Origem não encontrada!");
             return null;
         }
+        System.out.println("Paragem de Origem encontrada: " + origem);
         
         Paragem destino = ParagemDAO.getParagemByNome(nomeDestino);
         if(destino == null) {
@@ -96,9 +99,10 @@ public class Rota {
         }
         
         if(destino == null) {
+            System.out.println("Paragem de Destino não encontrada!");
             return null;
         }
-        
+        System.out.println("Paragem de Destino encontrada: " + destino);
         
         /**
          * 2 - Sabendo os distritos das duas paragens, buscar as linhas de
@@ -106,27 +110,31 @@ public class Rota {
          */
         HashSet<LinhaTransporte> linhasTransporteSet = new HashSet<>();
         int idDistrito = origem.getDistrito().getId();
-        LinhasTransporteDAO.getAllLinhasByDistritoInHashSet(idDistrito, linhasTransporteSet);
+        LinhasTransporteDAO.getAllLinhasByDistritoInHashSet(idDistrito, linhasTransporteSet);        
         
         if(idDistrito != destino.getDistrito().getId()) {
             idDistrito = destino.getDistrito().getId();
             LinhasTransporteDAO.getAllLinhasByDistritoInHashSet(idDistrito, linhasTransporteSet);
         }
+        System.out.println("Lista de Linhas de Transporte: " + linhasTransporteSet.size());
         
         
         /** 3 - Sabendo as linhas de transporte é possível ir atrás de todas as
          * arestas e portanto descobrir também a lista de paragens a se ter em
          * conta.
          */
-        HashSet<Paragem> paragensSet = new HashSet<>();
-        HashSet<Aresta> arestasSet = new HashSet<>();
+        HashMap<Integer, Paragem> paragensMap = new HashMap<>();
+        HashMap<Integer, Aresta> arestasMap = new HashMap<>();
         for(LinhaTransporte linha : linhasTransporteSet) {
-            ArestaDAO.getDataAndUpdateSets(linha, paragensSet, arestasSet);
+            ArestaDAO.getDataAndUpdateSets(linha, paragensMap, arestasMap);
         }
         
-        ArrayList<Aresta> arestasList = new ArrayList<>(arestasSet);
+        
         //ArrayList<LinhaTransporte> linhasList = new ArrayList<>(linhasTransporteSet);
-        ArrayList<Paragem> paragensList = new ArrayList<>(paragensSet);
+        ArrayList<Paragem> paragensList = new ArrayList<>(paragensMap.values());
+        ArrayList<Aresta> arestasList = new ArrayList<>(arestasMap.values());
+        System.out.println("Lista de Paragens: " + paragensList.size());
+        System.out.println("Lista de Arestas: " + arestasMap.size());
         
         /**
          * 4 - Com as informações adquiridas, chamamos um grafo para que se possa
@@ -137,6 +145,7 @@ public class Rota {
         GrafoDjikstra grafo = new GrafoDjikstra(arestasList, paragensList);
         Rota rota = grafo.encontrarRota(origem, destino);
         if(rota == null) {
+            System.out.println("Rota retornada igual a null");
             return null;
         }
         

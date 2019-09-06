@@ -44,6 +44,7 @@ public class Aresta {
         
         hash = 79 * hash + Objects.hashCode(idParagem1);
         hash = 79 * hash + Objects.hashCode(idParagem2);
+        hash = 79 * hash + Objects.hashCode(linhaTransporte.getId());
         return hash;
     }
 
@@ -59,12 +60,16 @@ public class Aresta {
             return false;
         }
         final Aresta other = (Aresta) obj;
-        if (!Objects.equals(this.paragem1, other.paragem1)) {
+        if (paragem1.getId() != other.getParagem1().getId()) {
             return false;
         }
-        if (!Objects.equals(this.paragem2, other.paragem2)) {
+        if (paragem2.getId() != other.getParagem2().getId()) {
             return false;
         }
+        if(linhaTransporte.getId() != other.getLinhaTransporte().getId()) {
+            return false;
+        }
+        
         return true;
     }    
     

@@ -88,7 +88,7 @@ public class DistritoDAO {
             statement = con.createStatement();
             
             String query = "SELECT * FROM " + TABLE_NAME + " WHERE " +
-                    COLUMN_NOME + " = " + idProcurado;
+                    COLUMN_ID + " = " + idProcurado;
             resultSet = statement.executeQuery(query);
             
             if(resultSet.next()) {
